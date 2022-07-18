@@ -19,6 +19,8 @@ class VideoViewer extends StatefulWidget {
   /// area. By default it is set to `EdgeInsets.all(0.0)`.
   final EdgeInsets padding;
 
+  final double width, height;
+
   // ignore: use_key_in_widget_constructors
   /// For showing the video playback area.
   ///
@@ -41,6 +43,8 @@ class VideoViewer extends StatefulWidget {
     this.borderColor = Colors.transparent,
     this.borderWidth = 0.0,
     this.padding = const EdgeInsets.all(0.0),
+    required this.width,
+    required this.height,
   }) : super(key: key);
 
   @override
@@ -50,8 +54,7 @@ class VideoViewer extends StatefulWidget {
 class _VideoViewerState extends State<VideoViewer> {
   /// Quick access to VideoPlayerController, only not null after [TrimmerEvent.initialized]
   /// has been emitted.
-  VideoPlayerController? get videoPlayerController =>
-      widget.trimmer.videoPlayerController;
+  VideoPlayerController? get videoPlayerController => widget.trimmer.videoPlayerController;
 
   @override
   void initState() {
@@ -69,28 +72,25 @@ class _VideoViewerState extends State<VideoViewer> {
     final _controller = videoPlayerController;
     return _controller == null
         ? Container()
-        : Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: Center(
-              child: AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: _controller.value.isInitialized
-                    ? Container(
-                        foregroundDecoration: BoxDecoration(
-                          border: Border.all(
-                            width: widget.borderWidth,
-                            color: widget.borderColor,
-                          ),
-                        ),
-                        child: VideoPlayer(_controller),
-                      )
-                    : const Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.white,
-                        ),
-                      ),
-              ),
-            ),
+        : AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: _controller.value.isInitialized
+                ? SizedBox(
+                    width: widget.width,
+                    height: widget.height,
+                    // foregroundDecoration: BoxDecoration(
+                    //   border: Border.all(
+                    //     width: widget.borderWidth,
+                    //     color: widget.borderColor,
+                    //   ),
+                    // ),
+                    child: VideoPlayer(_controller),
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
           );
   }
 
